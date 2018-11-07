@@ -123,33 +123,31 @@ terminal Token STRING;
 non terminal  			program;
 non terminal Axiom		axiom;
 
-//non terminal			apertura;
-//non terminal 			epsilon;	
-//non terminal  			seccionConstantes;
-//non terminal  			listaConstantes;
-//non terminal  			declaracionConstante;
+non terminal			apertura;
+non terminal 			epsilon;	
+non terminal  			seccionConstantes;
+non terminal  			listaConstantes;
+non terminal  			declaracionConstante;
 
 
+non terminal  			seccionVariables;
+non terminal  			listaVariables;
+non terminal  			declaracionVariable;
+non terminal			tipo;
 
-//non terminal  			seccionVariables;
-//non terminal  			listaVariables;
-//non terminal  			declaracionVariable;
-//non terminal			tipo;
-
-//non terminal  			seccionSubprogramas;
-//non terminal  			seccionPrincipal;
-//non terminal  			llamadaProcedimiento;
-//non terminal  			bloqueSentencias;
-//non terminal			sentencia;
-//non terminal			argumento;
-//non terminal			expresion;
-//non terminal			logico;
-//non terminal			asignacion;
-//non terminal			asignacion;
-//non terminal			operando;
-//non terminal			operador;
-//non terminal			expAritmetica;
-//non terminal			expLogica;
+non terminal  			seccionSubprogramas;
+non terminal  			seccionPrincipal;
+non terminal  			llamadaProcedimiento;
+non terminal  			bloqueSentencias;
+non terminal			sentencia;
+non terminal			argumento;
+non terminal			expresion;
+non terminal			logico;
+non terminal			sentenciaAsignacion;
+non terminal			operando;
+non terminal			operador;
+non terminal			expAritmetica;
+non terminal			expLogica;
 // ...
 
 
@@ -181,57 +179,53 @@ program ::=
   		
   		syntaxErrorManager.syntaxInfo ("Parsing process ended.");
    :};
-axiom ::=	;
+//axiom ::=	;
 
 // -------------
 // PROGRAMA
 // ------------------------------------------------------
 
-//axiom ::=					apertura seccionPrincipal PUNTO |
-//							apertura seccionConstantes seccionPrincipal PUNTO |
-//							apertura seccionVariables seccionPrincipal PUNTO |
-//							apertura seccionConstantes seccionVariables seccionPrincipal PUNTO;
-//
-//apertura ::= 				PROGRAMA IDENTIFICADOR DOS_PUNTOS;
-//
-//epsilon ::= ; 
-//
+axiom ::=					apertura seccionPrincipal PUNTO |
+							apertura seccionConstantes seccionPrincipal PUNTO |
+							apertura seccionVariables seccionPrincipal PUNTO |
+							apertura seccionConstantes seccionVariables seccionPrincipal PUNTO;
+
+apertura ::= 				PROGRAMA IDENTIFICADOR DOS_PUNTOS;
+
+epsilon ::= ; 
+
 // -------------
 // DECLARACION DE CONSTANTES
 // ------------------------------------------------------
-//
-//seccionConstantes ::= 		CONSTANTES listaConstantes;
-//listaConstantes ::= 		declaracionConstante listaConstantes | declaracionConstante;
-//declaracionConstante ::= 	IDENTIFICADOR ASIGNACION NUMERO PUNTO_COMA|
-//							IDENTIFICADOR ASIGNACION logico PUNTO_COMA;
-//logico ::= 					CIERTO | FALSO;
-//
-//
+
+seccionConstantes ::= 		CONSTANTES | CONSTANTES listaConstantes;
+listaConstantes ::= 		declaracionConstante listaConstantes | declaracionConstante;
+declaracionConstante ::= 	IDENTIFICADOR ASIGNACION NUMERO PUNTO_COMA|
+							IDENTIFICADOR ASIGNACION logico PUNTO_COMA;
+logico ::= 					CIERTO | FALSO;
+
+
 // -------------
 // DECLARACION DE VARIABLES
 // ------------------------------------------------------
-//seccionVariables ::= 		VARIABLES listaVariables;
-//listaVariables ::=			declaracionVariable listaVariables | declaracionVariable;
-//declaracionVariable ::= 	IDENTIFICADOR DOS_PUNTOS tipo PUNTO_COMA;
-//tipo ::= 					ENTERO | BOOLEANO ;
-//
-//
-//
+
+seccionVariables ::= 		VARIABLES | VARIABLES listaVariables;
+listaVariables ::=			declaracionVariable listaVariables | declaracionVariable;
+declaracionVariable ::= 	IDENTIFICADOR DOS_PUNTOS tipo PUNTO_COMA;
+tipo ::= 					ENTERO | BOOLEANO ;
+
+
 // -------------
 // MAIN
 // ------------------------------------------------------
-//
-//seccionPrincipal ::= 		COMIENZO FIN |
-//							COMIENZO bloqueSentencias FIN;
 
-//bloqueSentencias ::= 		sentencia bloqueSentencias  |  sentencia;
-
-//sentencia ::= llamadaProcedimiento | asignacion;
-
-//asignacion ::= IDENTIFICADOR ASIGNACION argumento PUNTO_COMA;
-
-//llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
-							
+seccionPrincipal ::= 		COMIENZO FIN  |
+							COMIENZO bloqueSentencias FIN ;
+bloqueSentencias ::= 		sentencia bloqueSentencias  |  sentencia;
+sentencia ::= 				llamadaProcedimiento | sentenciaAsignacion;
+sentenciaAsignacion ::= 				IDENTIFICADOR ASIGNACION argumento PUNTO_COMA;
+llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
+argumento ::= 				ENTERO SUMA ENTERO;
 
 //argumento ::= 				STRING | expresion | epsilon; 		
 
