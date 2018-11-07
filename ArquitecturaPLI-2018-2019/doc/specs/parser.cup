@@ -223,9 +223,9 @@ seccionPrincipal ::= 		COMIENZO FIN  |
 							COMIENZO bloqueSentencias FIN ;
 bloqueSentencias ::= 		sentencia bloqueSentencias  |  sentencia;
 sentencia ::= 				llamadaProcedimiento | sentenciaAsignacion;
-sentenciaAsignacion ::= 				IDENTIFICADOR ASIGNACION argumento PUNTO_COMA;
+sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION argumento PUNTO_COMA;
 llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
-argumento ::= 				ENTERO SUMA ENTERO;
+argumento ::= 				STRING | ENTERO SUMA ENTERO | epsilon;
 
 //argumento ::= 				STRING | expresion | epsilon; 		
 
