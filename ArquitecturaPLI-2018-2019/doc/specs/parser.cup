@@ -225,7 +225,7 @@ bloqueSentencias ::= 		sentencia bloqueSentencias  |  sentencia;
 sentencia ::= 				llamadaProcedimiento | sentenciaAsignacion;
 sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION argumento PUNTO_COMA;
 llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
-argumento ::= 				STRING | ENTERO SUMA ENTERO | epsilon;
+argumento ::= 				STRING | NUMERO SUMA NUMERO | epsilon;
 
 //argumento ::= 				STRING | expresion | epsilon; 		
 
