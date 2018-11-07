@@ -1,0 +1,158 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf0 package compiler.lexical;\
+import compiler.syntax.sym;\
+import compiler.lexical.Token;\
+import es.uned.lsi.compiler.lexical.ScannerIF;\
+import es.uned.lsi.compiler.lexical.LexicalError;\
+import es.uned.lsi.compiler.lexical.LexicalErrorManager;\
+\
+//Produced by MV tools 2018-10-26 08:58:59\
+// \ul incluir\ulnone  \ul aqui\ulnone , \ul si\ulnone  \ul es\ulnone  \ul necesario\ulnone  \ul otras\ulnone  \ul importaciones\ulnone \
+\
+%%\
+\
+%public\
+%class Scanner\
+%char\
+%line\
+%column\
+%cup\
+%\ul ignorecase\ulnone \
+\
+\
+%implements ScannerIF\
+%\ul scanerror\ulnone  LexicalError\
+\
+// \ul incluir\ulnone  \ul aqui\ulnone , \ul si\ulnone  \ul es\ulnone  \ul necesario\ulnone  \ul otras\ulnone  \ul directivas\ulnone \
+%\{\
+ LexicalErrorManager lexicalErrorManager = new LexicalErrorManager ();\
+ private \ul int\ulnone  commentCount = 0;\
+ \ul int\ulnone  \ul linecom\ulnone =0;\
+ \ul int\ulnone  \ul columncom\ulnone =0;\
+ \ul int\ulnone  \ul contadorstring\ulnone =0;\
+\
+\
+ //\ul Funcion\ulnone  \ul para\ulnone  \ul crear\ulnone  tokens\
+\
+ Token createToken (\ul int\ulnone  x)	\{\
+ 	Token token = new Token (x);\
+ 	 token.setLine (\ul yyline\ulnone  + 1);\
+ 	 token.setColumn (\ul yycolumn\ulnone  + 1);\
+ 	 token.setLexema (\ul yytext\ulnone  ());\
+ 	 return token;\
+\}\
+\
+ LexicalError createError(String \ul mensaje\ulnone )\{\
+	LexicalError error = new LexicalError (\ul mensaje\ulnone );\
+	error.setLine (\ul yyline\ulnone  + 1);\
+	error.setColumn (\ul yycolumn\ulnone  + 1);\
+	error.setLexema (\ul yytext\ulnone  ());\
+	lexicalErrorManager.lexicalError (\ul mensaje\ulnone );\
+	 return error;\
+\}\
+%\}  \
+\
+\
+//\ul Declaracion\ulnone  \ul de\ulnone  \ul expresiones\ulnone :\
+\
+COMENTARIO = #(.)*\
+DIGITO = [0-9]\
+LETRA = [a-zA-Z]\
+ESPACIO_BLANCO = [ \\t\\r\\n\\f]\
+IDENTIFICADOR = (\{LETRA\}| _)(\{LETRA\}|\{DIGITO\})*\
+STRING = \\"(.)*\\"\
+ENTERO = 0|([1/9](DIGITO)*)\
+fin = "fin"\{ESPACIO_BLANCO\}\
+\
+\
+//FIN \ul Declaracion\ulnone  \ul de\ulnone  \ul expresiones\ulnone :\
+\
+\
+\
+%%\
+\
+<YYINITIAL> \
+\{\
+\
+\
+//\ul Declaracion\ulnone  \ul de\ulnone  tokens:\
+\
+	"("  		\{return createToken (sym.PAR_IZDO);\}\
+	")"  		\{return createToken (sym.PAR_DCHO);\}\
+	"*"  		\{return createToken (sym.PRODUCTO);\}\
+	"+"  		\{return createToken (sym.SUMA);\}\
+	","  		\{return createToken (sym.COMA);\}\
+	".."  		\{return createToken (sym.RANGO_VECTOR);\}\
+	":"  		\{return createToken (sym.DOS_PUNTOS);\}\
+	";"  		\{return createToken (sym.PUNTO_COMA);\}\
+	"<"  		\{return createToken (sym.MENOR);\}\
+	"="  		\{return createToken (sym.ASIGNACION);\}\
+	"=="  		\{return createToken (sym.EQUIVALENTE);\}\
+	"\ul Subprogramas\ulnone "  		\{return createToken (sym.SUBPROGRAMAS);\}\
+	"["  		\{return createToken (sym.VECTOR_IZDO);\}\
+	"\\""  		\{return createToken (sym.COMILLA_DOBLE);\}\
+	"]"  		\{return createToken (sym.VECTOR_DCHO);\}\
+	"\ul booleano\ulnone "  		\{return createToken (sym.BOOLEANO);\}\
+	"\ul cierto\ulnone "  		\{return createToken (sym.CIERTO);\}\
+	"\ul comienzo\ulnone "  		\{return createToken (sym.COMIENZO);\}\
+	"\ul constantes\ulnone "  		\{return createToken (sym.CONSTANTES);\}\
+	"\ul de\ulnone "  		\{return createToken (sym.DE);\}\
+	"\ul devolver\ulnone "  		\{return createToken (sym.DEVOLVER);\}\
+	"\ul en\ulnone "  		\{return createToken (sym.EN);\}\
+	"\ul entero\ulnone "  		\{return createToken (sym.ENTERO);\}\
+	"\ul entonces\ulnone "  		\{return createToken (sym.ENTONCES);\}\
+	"\ul escribir\ulnone "  		\{return createToken (sym.ESCRIBIR);\}\
+	"\ul falso\ulnone "  		\{return createToken (sym.FALSO);\}\
+	"fin"  		\{return createToken (sym.FIN);\}\
+	"\ul funcion\ulnone "  		\{return createToken (sym.FUNCION);\}\
+	"no"  		\{return createToken (sym.NO);\}\
+	"\ul para\ulnone "  		\{return createToken (sym.PARA);\}\
+	"\ul procedimiento\ulnone "  		\{return createToken (sym.PROCEDIMIENTO);\}\
+	"\ul programa\ulnone "  		\{return createToken (sym.PROGRAMA);\}\
+	"\ul si\ulnone "  		\{return createToken (sym.SI);\}\
+	"\ul sino\ulnone "  		\{return createToken (sym.SINO);\}\
+	"\ul tipos\ulnone "  		\{return createToken (sym.TIPOS);\}\
+	"\ul var\ulnone "  		\{return createToken (sym.VAR);\}\
+	"variables"  		\{return createToken (sym.VARIABLES);\}\
+	"vector"  		\{return createToken (sym.VECTOR);\}\
+	"y"  		\{return createToken (sym.CONJUNCION);\}\
+\
+\
+//FIN \ul Declaracion\ulnone  \ul de\ulnone  tokens:\
+\
+\
+\
+\{ESPACIO_BLANCO\}	\{\}\
+\{IDENTIFICADOR\}		\{return createToken (sym.IDENTIFICADOR);\}\
+\{STRING\}		\{return createToken (sym.STRING);\}\
+\{COMENTARIO\}		\{\}\
+\{ENTERO\}		\{return createToken (sym.ENTERO);\}\
+\{fin\} \{\}\
+\
+\
+\
+\
+//\ul Declaracion\ulnone  \ul de\ulnone  \ul errores\ulnone :\
+\
+[^] \{\
+		LexicalError error = new LexicalError ();\
+		error.setLine (\ul yyline\ulnone  + 1);\
+		error.setColumn (\ul yycolumn\ulnone  + 1);\
+		error.setLexema (\ul yytext\ulnone  ());\
+		lexicalErrorManager.lexicalError (error);\
+	\}\
+\
+//FIN \ul Declaracion\ulnone  \ul de\ulnone  \ul errores\ulnone :\
+\
+\
+\
+\
+ \}\
+}
