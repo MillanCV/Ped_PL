@@ -1,6 +1,6 @@
 package compiler.syntax;
 
-// Declaraci?n de importaciones 
+// Declaraci�n de importaciones 
 //(No modificar las proporcionadas. Se pueden agregar mas)
 
 import java_cup.runtime.Symbol;
@@ -23,7 +23,7 @@ import compiler.semantic.type.*;
 import compiler.intermediate.*;
 import compiler.code.*;
 
-// Declaraci?n del c?digo de usuario
+// Declaraci�n del c�digo de usuario
 
 action code {:
 	
@@ -50,72 +50,116 @@ parser code {:
 	}
 :}
 
-// Declaraci?n de terminales (Ejemplo)
+// Declaraci�n de terminales 
 
-terminal Token RANGO;
-terminal Token DE;
-terminal Token ENTONCES;
-terminal Token NO;
-terminal Token DEVOLVER;
-terminal Token COMILLA_DOBLE;
-terminal Token PROGRAMA;
-terminal Token ENTERO;
-terminal Token FIN;
-terminal Token PROCEDIMIENTO;
-terminal Token PARA;
+
+// Palabras reservadas
 terminal Token BOOLEANO;
-terminal Token SI;
-terminal Token VECTOR;
-terminal Token FUNCION;
-terminal Token COR_IZDO;
-terminal Token COR_DCHO;
-terminal Token EQUIVALENTE;
-terminal Token SINO;
-terminal Token VARIABLES;
-terminal Token FALSO;
-terminal Token VAR;
-terminal Token PAR_IZDO;
 terminal Token CIERTO;
+terminal Token COMIENZO;
+terminal Token CONSTANTES;
+terminal Token DE;
 terminal Token EN;
-terminal Token PAR_DCHO;
-terminal Token PRODUCTO;
+terminal Token DEVOLVER;
+terminal Token ENTERO;
+terminal Token ENTONCES;
+terminal Token ESCRIBIR;
+terminal Token FALSO;
+terminal Token FIN;
+terminal Token FUNCION;
+terminal Token PARA;
+terminal Token PROCEDIMIENTO;
+terminal Token PROGRAMA;
+terminal Token PUNTO;
+terminal Token SI;
+terminal Token SINO;
 terminal Token SUBPROGRAMAS;
 terminal Token TIPOS;
-terminal Token SUMA;
-terminal Token COMA;
-terminal Token CONSTANTES;
-terminal Token ESCRIBIR;
-terminal Token COMIENZO;
-terminal Token Y;
-terminal Token DOS_PUNTOS;
-terminal Token PUNTO_COMA;
-terminal Token MENOR;
-terminal Token ASIGNACION;
-terminal Token PUNTO;
+terminal Token VAR;
+terminal Token VARIABLES;
+terminal Token VECTOR;
 
+
+// Delimitadores
+terminal Token COMILLA_DOBLE;
+terminal Token PAR_IZDO;
+terminal Token PAR_DCHO;
+terminal Token COR_IZDO;
+terminal Token COR_DCHO;
+terminal Token COMENTARIO;
+terminal Token COMA;
+terminal Token PUNTO_COMA;
+terminal Token DOS_PUNTOS;
+terminal Token RANGO;
+
+// Operadores aritmeticos
+terminal Token SUMA;
+terminal Token PRODUCTO;
+
+// Operadores relacionales
+terminal Token MENOR;
+terminal Token EQUIVALENTE;
+
+//Operadores logicos
+terminal Token Y;
+terminal Token NO;
+
+// Operador asignacion
+terminal Token ASIGNACION;
+
+// Patron
 terminal Token NUMERO;
 terminal Token IDENTIFICADOR;
 terminal Token STRING;
-terminal Token COMENTARIO;
-terminal Token FINAL;
+
+
 
 // ...
 
 
-// Declaraci?n de no terminales
+// Declaraci�n de no terminales
 // no modificar los propuestos
 
 non terminal  			program;
 non terminal Axiom		axiom;
+
+//non terminal			apertura;
+//non terminal 			epsilon;	
+//non terminal  			seccionConstantes;
+//non terminal  			listaConstantes;
+//non terminal  			declaracionConstante;
+
+
+
+//non terminal  			seccionVariables;
+//non terminal  			listaVariables;
+//non terminal  			declaracionVariable;
+//non terminal			tipo;
+
+//non terminal  			seccionSubprogramas;
+//non terminal  			seccionPrincipal;
+//non terminal  			llamadaProcedimiento;
+//non terminal  			bloqueSentencias;
+//non terminal			sentencia;
+//non terminal			argumento;
+//non terminal			expresion;
+//non terminal			logico;
+//non terminal			asignacion;
+//non terminal			asignacion;
+//non terminal			operando;
+//non terminal			operador;
+//non terminal			expAritmetica;
+//non terminal			expLogica;
 // ...
 
 
-// Declaraci?n de relaciones de precedencia
+// Declaraci�n de relaciones de precedencia
 ////precedence left     PLUS,
 ////                    MINUS;
 // ...
 
-// Declaraci?n de reglas de producci?n
+
+// Declaraci�n de reglas de producci�n
 
 
 start with program;
@@ -126,17 +170,74 @@ program ::=
    :}
   axiom:ax
   {: 
-  		// No modificar esta estructura, aunque se pueden a?adir m?s acciones sem?nticas
+  		// No modificar esta estructura, aunque se pueden a�adir m�s acciones sem�nticas
   		// Para la entrega de febrero pueden comentarse las dos sentencias siguientes:
   		//List intermediateCode = ax.getIntermediateCode ();
   		//finalCodeFactory.create (intermediateCode);
   		// En caso de no comentarse las sentencias anteriores puede generar una excepcion
   		// en las llamadas a cupTest en la entrega de Febrero. Esto es debido a que 
-  		// a?n no se tendr? implementada la generaci?n de c?digo intermedio ni final.
-  		// Para la entrega de Junio deber?n descomentarse y usarse.
+  		// a�n no se tendr� implementada la generaci�n de c�digo intermedio ni final.
+  		// Para la entrega de Junio deber�n descomentarse y usarse.
   		
   		syntaxErrorManager.syntaxInfo ("Parsing process ended.");
    :};
+axiom ::=	;
+
+// -------------
+// PROGRAMA
+// ------------------------------------------------------
+
+//axiom ::=					apertura seccionPrincipal PUNTO |
+//							apertura seccionConstantes seccionPrincipal PUNTO |
+//							apertura seccionVariables seccionPrincipal PUNTO |
+//							apertura seccionConstantes seccionVariables seccionPrincipal PUNTO;
+//
+//apertura ::= 				PROGRAMA IDENTIFICADOR DOS_PUNTOS;
+//
+//epsilon ::= ; 
+//
+// -------------
+// DECLARACION DE CONSTANTES
+// ------------------------------------------------------
+//
+//seccionConstantes ::= 		CONSTANTES listaConstantes;
+//listaConstantes ::= 		declaracionConstante listaConstantes | declaracionConstante;
+//declaracionConstante ::= 	IDENTIFICADOR ASIGNACION NUMERO PUNTO_COMA|
+//							IDENTIFICADOR ASIGNACION logico PUNTO_COMA;
+//logico ::= 					CIERTO | FALSO;
+//
+//
+// -------------
+// DECLARACION DE VARIABLES
+// ------------------------------------------------------
+//seccionVariables ::= 		VARIABLES listaVariables;
+//listaVariables ::=			declaracionVariable listaVariables | declaracionVariable;
+//declaracionVariable ::= 	IDENTIFICADOR DOS_PUNTOS tipo PUNTO_COMA;
+//tipo ::= 					ENTERO | BOOLEANO ;
+//
+//
+//
+// -------------
+// MAIN
+// ------------------------------------------------------
+//
+//seccionPrincipal ::= 		COMIENZO FIN |
+//							COMIENZO bloqueSentencias FIN;
+
+//bloqueSentencias ::= 		sentencia bloqueSentencias  |  sentencia;
+
+//sentencia ::= llamadaProcedimiento | asignacion;
+
+//asignacion ::= IDENTIFICADOR ASIGNACION argumento PUNTO_COMA;
+
+//llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
+							
+
+//argumento ::= 				STRING | expresion | epsilon; 		
 
 
-axiom ::= ;
+// -------------
+// EXPRESIONES
+// ------------------------------------------------------
+
+//expresion ::= 				NUMERO | IDENTIFICADOR ;
