@@ -142,19 +142,26 @@ non terminal  			bloqueSentencias;
 non terminal			sentencia;
 non terminal			argumento;
 non terminal			expresion;
-non terminal			logico;
+non terminal			valorLogico;
 non terminal			sentenciaAsignacion;
 non terminal			operando;
 non terminal			operador;
 non terminal			expAritmetica;
 non terminal			expLogica;
+
+non terminal 			funcion;
 // ...
 
 
 // Declaraci�n de relaciones de precedencia
-////precedence left     PLUS,
-////                    MINUS;
-// ...
+precedence right	NO;
+precedence left     PRODUCTO;
+precedence left		Y;
+precedence left     SUMA;
+precedence left		MENOR;
+precedence left 	EQUIVALENTE;
+precedence left     PAR_IZDO, PAR_DCHO;
+precedence left     COR_IZDO, COR_DCHO;
 
 
 // Declaraci�n de reglas de producci�n
@@ -201,8 +208,8 @@ epsilon ::= ;
 seccionConstantes ::= 		CONSTANTES | CONSTANTES listaConstantes;
 listaConstantes ::= 		declaracionConstante listaConstantes | declaracionConstante;
 declaracionConstante ::= 	IDENTIFICADOR ASIGNACION NUMERO PUNTO_COMA|
-							IDENTIFICADOR ASIGNACION logico PUNTO_COMA;
-logico ::= 					CIERTO | FALSO;
+							IDENTIFICADOR ASIGNACION valorLogico PUNTO_COMA;
+valorLogico ::= 			CIERTO | FALSO;
 
 
 // -------------
@@ -222,16 +229,47 @@ tipo ::= 					ENTERO | BOOLEANO ;
 seccionPrincipal ::= 		COMIENZO FIN  |
 							COMIENZO bloqueSentencias FIN ;
 bloqueSentencias ::= 		sentencia bloqueSentencias  |  sentencia;
-sentencia ::= 				llamadaProcedimiento | sentenciaAsignacion;
-sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION argumento PUNTO_COMA;
+sentencia ::= 				llamadaProcedimiento 
+							| sentenciaAsignacion;
+sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION expresion PUNTO_COMA;
 llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
-argumento ::= 				STRING | NUMERO SUMA NUMERO | epsilon;
+argumento ::= 				STRING | IDENTIFICADOR | expresion| epsilon;
 
-//argumento ::= 				STRING | expresion | epsilon; 		
+//argumento ::= 			STRING | expresion | epsilon; 		
 
 
 // -------------
 // EXPRESIONES
 // ------------------------------------------------------
 
-//expresion ::= 				NUMERO | IDENTIFICADOR ;
+expresion ::=				expAritmetica | expLogica ; 
+expAritmetica ::=			expAritmetica SUMA expAritmetica 
+							| IDENTIFICADOR SUMA expAritmetica 
+							| expAritmetica SUMA IDENTIFICADOR 
+							| IDENTIFICADOR SUMA IDENTIFICADOR 
+							| expAritmetica PRODUCTO expAritmetica 
+							| IDENTIFICADOR PRODUCTO expAritmetica 
+							| expAritmetica PRODUCTO IDENTIFICADOR 
+							| IDENTIFICADOR PRODUCTO IDENTIFICADOR 
+							| PAR_IZDO expAritmetica PAR_DCHO 
+							
+							| NUMERO ;
+//funcion
+							
+expLogica ::=				NO expLogica 
+							| NO IDENTIFICADOR
+							| expLogica Y expLogica 
+							| IDENTIFICADOR Y expLogica 
+							| expLogica Y IDENTIFICADOR 
+							| IDENTIFICADOR Y IDENTIFICADOR 
+							| expAritmetica MENOR expAritmetica 
+							| IDENTIFICADOR MENOR expAritmetica
+							| expAritmetica MENOR IDENTIFICADOR
+							| IDENTIFICADOR MENOR IDENTIFICADOR
+							| expAritmetica EQUIVALENTE expAritmetica 
+							| IDENTIFICADOR EQUIVALENTE expAritmetica 
+							| expAritmetica EQUIVALENTE IDENTIFICADOR 
+							| IDENTIFICADOR EQUIVALENTE IDENTIFICADOR 
+							| PAR_IZDO expLogica PAR_DCHO 
+							| CIERTO 
+							| FALSO;
