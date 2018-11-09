@@ -59,10 +59,10 @@ DIGITO = [0-9]
 ESPACIO_BLANCO = [ \t\r\n\f]
 IDENTIFICADOR = ({LETRA}|_)({LETRA}|{DIGITO})*
 LETRA = [a-zA-Z]
-NUMERO = 0\s|[1-9]({DIGITO})*
+NUMERO = 0|[1-9]({DIGITO})*
 STRING = \"(.)*\"
 
-fin = "fin"{ESPACIO_BLANCO}
+
 
 //FIN Declaracion de expresiones:
 
@@ -130,7 +130,7 @@ fin = "fin"{ESPACIO_BLANCO}
 
 {COMENTARIO}	{}
 
-{fin} {}
+
 
 
 

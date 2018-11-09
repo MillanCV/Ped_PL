@@ -161,6 +161,9 @@ non terminal			sentencia;
 non terminal			argumento;
 non terminal			expresion;
 non terminal			valorLogico;
+
+non terminal			controlSi;
+non terminal			controlPara;
 non terminal			sentenciaAsignacion;
 non terminal			operando;
 non terminal			operador;
@@ -183,7 +186,7 @@ precedence left		MENOR;
 precedence left 	EQUIVALENTE;
 precedence left     PAR_IZDO, PAR_DCHO;
 precedence left     COR_IZDO, COR_DCHO;
-
+precedence nonassoc	SI;
 
 // Declaraci�n de reglas de producci�n
 
@@ -281,7 +284,7 @@ tipo ::= 					ENTERO
 // ------------------------------------------------------
 
 seccionSubprogramas ::= 	SUBPROGRAMAS 
-							| SUBPROGRAMAS listaSubprogramas;
+							| SUBPROGRAMAS listaSubprogramas ;
 listaSubprogramas ::= 		listaSubprogramas declaracionFuncion
 							| listaSubprogramas declaracionProcedimiento
 							| declaracionFuncion
@@ -292,10 +295,12 @@ listaSubprogramas ::= 		listaSubprogramas declaracionFuncion
 // SECCION PROCEDIMIENTO
 // ------------------------------------------------------						
 
-declaracionProcedimiento ::= aperturaProcedimiento seccionesPrograma FIN PUNTO_COMA;
+declaracionProcedimiento ::= aperturaProcedimiento seccionesPrograma FIN PUNTO_COMA ;
 aperturaProcedimiento ::= 	PROCEDIMIENTO IDENTIFICADOR PAR_IZDO parametrosProcedimiento PAR_DCHO DOS_PUNTOS;						
 parametrosProcedimiento ::=	nombreVariables DOS_PUNTOS tipo PUNTO_COMA parametrosProcedimiento
+							| VAR nombreVariables DOS_PUNTOS tipo PUNTO_COMA parametrosProcedimiento
 							| nombreVariables DOS_PUNTOS tipo
+							| VAR nombreVariables DOS_PUNTOS tipo
 							| epsilon;
 
 
@@ -303,7 +308,7 @@ parametrosProcedimiento ::=	nombreVariables DOS_PUNTOS tipo PUNTO_COMA parametro
 // SECCION FUNCION
 // ------------------------------------------------------						
 
-declaracionFuncion ::= 	aperturaFuncion seccionesPrograma funcionDevolver FIN PUNTO_COMA;
+declaracionFuncion ::= 	aperturaFuncion seccionesPrograma funcionDevolver FIN PUNTO_COMA ;
 funcionDevolver ::=		DEVOLVER IDENTIFICADOR PUNTO_COMA ;
 aperturaFuncion ::= 	FUNCION IDENTIFICADOR PAR_IZDO parametrosProcedimiento PAR_DCHO DOS_PUNTOS tipoPrimitivo DOS_PUNTOS;						
 tipoPrimitivo ::=		ENTERO 
@@ -314,17 +319,19 @@ tipoPrimitivo ::=		ENTERO
 // MAIN
 // ------------------------------------------------------
 
-seccionPrincipal ::= 		COMIENZO   
+seccionPrincipal ::= 		COMIENZO    
 							| COMIENZO bloqueSentencias ;
-bloqueSentencias ::= 		sentencia bloqueSentencias  
-							|  sentencia;
-sentencia ::= 				llamadaProcedimiento 
+bloqueSentencias ::= 		bloqueSentencias sentencia PUNTO_COMA  
+							|  sentencia PUNTO_COMA;
+sentencia ::= 				controlSi
+							| controlPara
+							| llamadaProcedimiento  
 							| sentenciaAsignacion;
 							
 							
 							
-llamadaProcedimiento ::= 	IDENTIFICADOR PAR_IZDO argumentoMultiple PAR_DCHO PUNTO_COMA
-							| ESCRIBIR PAR_IZDO argumentoMultiple PAR_DCHO PUNTO_COMA;
+llamadaProcedimiento ::= 	IDENTIFICADOR PAR_IZDO argumentoMultiple PAR_DCHO 
+							| ESCRIBIR PAR_IZDO argumento PAR_DCHO ;
 llamadaFuncion ::= 			IDENTIFICADOR PAR_IZDO argumentoMultiple PAR_DCHO;
 argumentoMultiple ::=		argumento COMA argumentoMultiple | argumento;
 argumento ::= 				STRING 
@@ -335,12 +342,25 @@ argumento ::= 				STRING
 
 
 
-sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION expresion PUNTO_COMA
-							| elementoVector ASIGNACION expresion PUNTO_COMA;
+sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION expresion 
+							| elementoVector ASIGNACION expresion ;
 
 					
-					
-						
+// -------------
+// SECUENCIA DE CONTROL SI ENTONCES SINO
+// ------------------------------------------------------					
+
+controlSi ::= 				SI expLogica ENTONCES DOS_PUNTOS bloqueSentencias FIN SI 
+							| SI expLogica ENTONCES DOS_PUNTOS bloqueSentencias SINO DOS_PUNTOS bloqueSentencias FIN SI;
+		
+		
+// -------------
+// SECUENCIA DE CONTROL PARA
+// ------------------------------------------------------	
+
+controlPara ::= 			PARA IDENTIFICADOR EN constanteNumerica RANGO constanteNumerica DOS_PUNTOS bloqueSentencias FIN PARA ;
+
+				
 // -------------
 // EXPRESIONES
 // ------------------------------------------------------
