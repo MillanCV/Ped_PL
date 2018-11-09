@@ -16,8 +16,9 @@ programa seis:
 comienzo
 	c = 5;
 	d = 18;
+	
 	suma = sumar(c,d);
-
 	escribir(suma);
+	
 
 fin.

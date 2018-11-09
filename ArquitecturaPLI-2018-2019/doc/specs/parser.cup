@@ -124,6 +124,7 @@ non terminal  			program;
 non terminal Axiom		axiom;
 
 non terminal			apertura;
+non terminal			seccionesPrograma;
 non terminal 			epsilon;	
 non terminal  			seccionConstantes;
 non terminal  			listaConstantes;
@@ -138,10 +139,23 @@ non terminal  			seccionVariables;
 non terminal  			listaVariables;
 non terminal  			declaracionVariable;
 non terminal			tipo;
+non terminal			nombreVariables;
 
 non terminal  			seccionSubprogramas;
+non terminal  			listaSubprogramas;
+non terminal  			declaracionProcedimiento;
+non terminal  			aperturaProcedimiento;
+non terminal  			parametrosProcedimiento;
+non terminal  			declaracionFuncion;
+non terminal  			aperturaFuncion;
+non terminal  			tipoPrimitivo;
+non terminal  			funcionDevolver;
+
 non terminal  			seccionPrincipal;
 non terminal  			llamadaProcedimiento;
+non terminal  			llamadaFuncion;
+non terminal  			argumentoMultiple;
+
 non terminal  			bloqueSentencias;
 non terminal			sentencia;
 non terminal			argumento;
@@ -199,17 +213,24 @@ program ::=
 // PROGRAMA
 // ------------------------------------------------------
 
-axiom ::=					apertura seccionPrincipal PUNTO 
-							| apertura seccionConstantes seccionPrincipal PUNTO 
-							| apertura seccionTipos seccionPrincipal PUNTO 
-							| apertura seccionVariables seccionPrincipal PUNTO 
-							| apertura seccionConstantes seccionTipos seccionPrincipal PUNTO
-							| apertura seccionConstantes seccionVariables seccionPrincipal PUNTO
-							| apertura seccionTipos seccionVariables seccionPrincipal PUNTO
-							| apertura seccionConstantes seccionTipos seccionVariables seccionPrincipal PUNTO;
-
+axiom ::=					apertura seccionesPrograma FIN PUNTO; 
 apertura ::= 				PROGRAMA IDENTIFICADOR DOS_PUNTOS;
-
+seccionesPrograma ::= 		seccionPrincipal  
+							|  seccionConstantes seccionPrincipal  
+							|  seccionTipos seccionPrincipal  
+							|  seccionVariables seccionPrincipal 
+							|  seccionSubprogramas seccionPrincipal   
+							|  seccionConstantes seccionTipos seccionPrincipal 
+							|  seccionConstantes seccionVariables seccionPrincipal 
+							|  seccionConstantes seccionSubprogramas seccionPrincipal 
+							|  seccionTipos seccionVariables seccionPrincipal 
+							|  seccionTipos seccionSubprogramas seccionPrincipal 
+							|  seccionVariables seccionSubprogramas seccionPrincipal 
+							|  seccionConstantes seccionTipos seccionVariables seccionPrincipal 
+							|  seccionConstantes seccionTipos seccionSubprogramas seccionPrincipal 
+							|  seccionConstantes seccionSubprogramas seccionSubprogramas seccionPrincipal 
+							|  seccionTipos seccionVariables seccionSubprogramas seccionPrincipal 
+							|  seccionConstantes seccionTipos seccionVariables seccionSubprogramas seccionPrincipal;
 epsilon ::= ; 
 
 // -------------
@@ -222,6 +243,7 @@ listaConstantes ::= 		declaracionConstante listaConstantes
 							| declaracionConstante;
 declaracionConstante ::= 	IDENTIFICADOR ASIGNACION NUMERO PUNTO_COMA 
 							| IDENTIFICADOR ASIGNACION valorLogico PUNTO_COMA;
+
 valorLogico ::= 			CIERTO 
 							| FALSO;
 
@@ -247,25 +269,64 @@ seccionVariables ::= 		VARIABLES
 							| VARIABLES listaVariables;
 listaVariables ::=			declaracionVariable listaVariables 
 							| declaracionVariable;
-declaracionVariable ::= 	IDENTIFICADOR DOS_PUNTOS tipo PUNTO_COMA;
+declaracionVariable ::= 	nombreVariables DOS_PUNTOS tipo PUNTO_COMA;
+nombreVariables ::= 		IDENTIFICADOR COMA nombreVariables | IDENTIFICADOR;
 tipo ::= 					ENTERO 
 							| BOOLEANO 
 							| IDENTIFICADOR;
+							
+							
+// -------------
+// SECCION SUBPROGRAMAS
+// ------------------------------------------------------
+
+seccionSubprogramas ::= 	SUBPROGRAMAS 
+							| SUBPROGRAMAS listaSubprogramas;
+listaSubprogramas ::= 		listaSubprogramas declaracionFuncion
+							| listaSubprogramas declaracionProcedimiento
+							| declaracionFuncion
+							| declaracionProcedimiento;
+							
+							
+// -------------
+// SECCION PROCEDIMIENTO
+// ------------------------------------------------------						
+
+declaracionProcedimiento ::= aperturaProcedimiento seccionesPrograma FIN PUNTO_COMA;
+aperturaProcedimiento ::= 	PROCEDIMIENTO IDENTIFICADOR PAR_IZDO parametrosProcedimiento PAR_DCHO DOS_PUNTOS;						
+parametrosProcedimiento ::=	nombreVariables DOS_PUNTOS tipo PUNTO_COMA parametrosProcedimiento
+							| nombreVariables DOS_PUNTOS tipo
+							| epsilon;
+
+
+// -------------
+// SECCION FUNCION
+// ------------------------------------------------------						
+
+declaracionFuncion ::= 	aperturaFuncion seccionesPrograma funcionDevolver FIN PUNTO_COMA;
+funcionDevolver ::=		DEVOLVER IDENTIFICADOR PUNTO_COMA ;
+aperturaFuncion ::= 	FUNCION IDENTIFICADOR PAR_IZDO parametrosProcedimiento PAR_DCHO DOS_PUNTOS tipoPrimitivo DOS_PUNTOS;						
+tipoPrimitivo ::=		ENTERO 
+						| BOOLEANO;
 
 
 // -------------
 // MAIN
 // ------------------------------------------------------
 
-seccionPrincipal ::= 		COMIENZO FIN  
-							| COMIENZO bloqueSentencias FIN ;
+seccionPrincipal ::= 		COMIENZO   
+							| COMIENZO bloqueSentencias ;
 bloqueSentencias ::= 		sentencia bloqueSentencias  
 							|  sentencia;
 sentencia ::= 				llamadaProcedimiento 
 							| sentenciaAsignacion;
 							
-
-llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
+							
+							
+llamadaProcedimiento ::= 	IDENTIFICADOR PAR_IZDO argumentoMultiple PAR_DCHO PUNTO_COMA
+							| ESCRIBIR PAR_IZDO argumentoMultiple PAR_DCHO PUNTO_COMA;
+llamadaFuncion ::= 			IDENTIFICADOR PAR_IZDO argumentoMultiple PAR_DCHO;
+argumentoMultiple ::=		argumento COMA argumentoMultiple | argumento;
 argumento ::= 				STRING 
 							| IDENTIFICADOR 
 							| expresion 
@@ -286,7 +347,8 @@ sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION expresion PUNTO_COMA
 
 expresion ::=				expAritmetica 
 							| expLogica 
-							| elementoVector; 
+							| elementoVector
+							| llamadaFuncion; 
 expAritmetica ::=			opAritmetico SUMA opAritmetico 
 							| opAritmetico PRODUCTO opAritmetico 
 							| PAR_IZDO expAritmetica PAR_DCHO 
