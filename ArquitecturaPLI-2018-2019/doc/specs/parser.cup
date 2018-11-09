@@ -129,6 +129,10 @@ non terminal  			seccionConstantes;
 non terminal  			listaConstantes;
 non terminal  			declaracionConstante;
 
+non terminal 			seccionTipos;
+non terminal			listaTipos;
+non terminal			declaracionTipo;
+non terminal			constanteNumerica;
 
 non terminal  			seccionVariables;
 non terminal  			listaVariables;
@@ -146,10 +150,13 @@ non terminal			valorLogico;
 non terminal			sentenciaAsignacion;
 non terminal			operando;
 non terminal			operador;
+non terminal			opAritmetico;
+non terminal			opLogico;
 non terminal			expAritmetica;
 non terminal			expLogica;
 
 non terminal 			funcion;
+non terminal 			elementoVector;
 // ...
 
 
@@ -192,10 +199,14 @@ program ::=
 // PROGRAMA
 // ------------------------------------------------------
 
-axiom ::=					apertura seccionPrincipal PUNTO |
-							apertura seccionConstantes seccionPrincipal PUNTO |
-							apertura seccionVariables seccionPrincipal PUNTO |
-							apertura seccionConstantes seccionVariables seccionPrincipal PUNTO;
+axiom ::=					apertura seccionPrincipal PUNTO 
+							| apertura seccionConstantes seccionPrincipal PUNTO 
+							| apertura seccionTipos seccionPrincipal PUNTO 
+							| apertura seccionVariables seccionPrincipal PUNTO 
+							| apertura seccionConstantes seccionTipos seccionPrincipal PUNTO
+							| apertura seccionConstantes seccionVariables seccionPrincipal PUNTO
+							| apertura seccionTipos seccionVariables seccionPrincipal PUNTO
+							| apertura seccionConstantes seccionTipos seccionVariables seccionPrincipal PUNTO;
 
 apertura ::= 				PROGRAMA IDENTIFICADOR DOS_PUNTOS;
 
@@ -205,71 +216,93 @@ epsilon ::= ;
 // DECLARACION DE CONSTANTES
 // ------------------------------------------------------
 
-seccionConstantes ::= 		CONSTANTES | CONSTANTES listaConstantes;
-listaConstantes ::= 		declaracionConstante listaConstantes | declaracionConstante;
-declaracionConstante ::= 	IDENTIFICADOR ASIGNACION NUMERO PUNTO_COMA|
-							IDENTIFICADOR ASIGNACION valorLogico PUNTO_COMA;
-valorLogico ::= 			CIERTO | FALSO;
+seccionConstantes ::= 		CONSTANTES 
+							| CONSTANTES listaConstantes;
+listaConstantes ::= 		declaracionConstante listaConstantes 
+							| declaracionConstante;
+declaracionConstante ::= 	IDENTIFICADOR ASIGNACION NUMERO PUNTO_COMA 
+							| IDENTIFICADOR ASIGNACION valorLogico PUNTO_COMA;
+valorLogico ::= 			CIERTO 
+							| FALSO;
+
+
+// -------------
+// DECLARACION DE TIPOS
+// ------------------------------------------------------
+
+seccionTipos ::=			TIPOS 
+							| TIPOS listaTipos;
+listaTipos ::=				declaracionTipo listaTipos 
+							| declaracionTipo;
+declaracionTipo ::=			IDENTIFICADOR ASIGNACION VECTOR COR_IZDO constanteNumerica RANGO constanteNumerica COR_DCHO DE tipo PUNTO_COMA;
+constanteNumerica ::=		NUMERO 
+							| IDENTIFICADOR;
 
 
 // -------------
 // DECLARACION DE VARIABLES
 // ------------------------------------------------------
 
-seccionVariables ::= 		VARIABLES | VARIABLES listaVariables;
-listaVariables ::=			declaracionVariable listaVariables | declaracionVariable;
+seccionVariables ::= 		VARIABLES 
+							| VARIABLES listaVariables;
+listaVariables ::=			declaracionVariable listaVariables 
+							| declaracionVariable;
 declaracionVariable ::= 	IDENTIFICADOR DOS_PUNTOS tipo PUNTO_COMA;
-tipo ::= 					ENTERO | BOOLEANO ;
+tipo ::= 					ENTERO 
+							| BOOLEANO 
+							| IDENTIFICADOR;
 
 
 // -------------
 // MAIN
 // ------------------------------------------------------
 
-seccionPrincipal ::= 		COMIENZO FIN  |
-							COMIENZO bloqueSentencias FIN ;
-bloqueSentencias ::= 		sentencia bloqueSentencias  |  sentencia;
+seccionPrincipal ::= 		COMIENZO FIN  
+							| COMIENZO bloqueSentencias FIN ;
+bloqueSentencias ::= 		sentencia bloqueSentencias  
+							|  sentencia;
 sentencia ::= 				llamadaProcedimiento 
 							| sentenciaAsignacion;
-sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION expresion PUNTO_COMA;
+							
+
 llamadaProcedimiento ::= 	ESCRIBIR PAR_IZDO argumento PAR_DCHO PUNTO_COMA;
-argumento ::= 				STRING | IDENTIFICADOR | expresion| epsilon;
+argumento ::= 				STRING 
+							| IDENTIFICADOR 
+							| expresion 
+							| epsilon;
 
-//argumento ::= 			STRING | expresion | epsilon; 		
 
 
+
+sentenciaAsignacion ::= 	IDENTIFICADOR ASIGNACION expresion PUNTO_COMA
+							| elementoVector ASIGNACION expresion PUNTO_COMA;
+
+					
+					
+						
 // -------------
 // EXPRESIONES
 // ------------------------------------------------------
 
-expresion ::=				expAritmetica | expLogica ; 
-expAritmetica ::=			expAritmetica SUMA expAritmetica 
-							| IDENTIFICADOR SUMA expAritmetica 
-							| expAritmetica SUMA IDENTIFICADOR 
-							| IDENTIFICADOR SUMA IDENTIFICADOR 
-							| expAritmetica PRODUCTO expAritmetica 
-							| IDENTIFICADOR PRODUCTO expAritmetica 
-							| expAritmetica PRODUCTO IDENTIFICADOR 
-							| IDENTIFICADOR PRODUCTO IDENTIFICADOR 
+expresion ::=				expAritmetica 
+							| expLogica 
+							| elementoVector; 
+expAritmetica ::=			opAritmetico SUMA opAritmetico 
+							| opAritmetico PRODUCTO opAritmetico 
 							| PAR_IZDO expAritmetica PAR_DCHO 
-							
 							| NUMERO ;
-//funcion
-							
-expLogica ::=				NO expLogica 
-							| NO IDENTIFICADOR
-							| expLogica Y expLogica 
-							| IDENTIFICADOR Y expLogica 
-							| expLogica Y IDENTIFICADOR 
-							| IDENTIFICADOR Y IDENTIFICADOR 
-							| expAritmetica MENOR expAritmetica 
-							| IDENTIFICADOR MENOR expAritmetica
-							| expAritmetica MENOR IDENTIFICADOR
-							| IDENTIFICADOR MENOR IDENTIFICADOR
-							| expAritmetica EQUIVALENTE expAritmetica 
-							| IDENTIFICADOR EQUIVALENTE expAritmetica 
-							| expAritmetica EQUIVALENTE IDENTIFICADOR 
-							| IDENTIFICADOR EQUIVALENTE IDENTIFICADOR 
+expLogica ::=				NO opLogico
+							| opLogico Y opLogico 
+							| opAritmetico MENOR opAritmetico 
+							| opAritmetico EQUIVALENTE opAritmetico 
 							| PAR_IZDO expLogica PAR_DCHO 
 							| CIERTO 
 							| FALSO;
+							
+opAritmetico ::= 			expAritmetica
+							| IDENTIFICADOR
+							| elementoVector;
+opLogico ::=				expLogica
+							| IDENTIFICADOR;
+elementoVector ::=			IDENTIFICADOR COR_IZDO elementoVector COR_DCHO
+							|IDENTIFICADOR COR_IZDO constanteNumerica COR_DCHO;
