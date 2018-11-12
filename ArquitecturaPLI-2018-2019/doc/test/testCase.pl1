@@ -1,4 +1,4 @@
-# Test programa completo y sintÂ·cticamente correcto Ã’Ã’Ã’
+# Test programa completo y sintácticamente correcto ñññ
 programa completo:
 	constantes
 		cte1 = 1;
@@ -55,7 +55,7 @@ programa completo:
 							escribir(i);
 							qwertyuiop=z+mpb;
 							escribir(qwertyuiop);
-							escribir("cuÃ’ao");
+							escribir("cuñao");
 							devolver 1;
 							si lt entonces:
 								mpb=CIERTO Y NO FALSO;

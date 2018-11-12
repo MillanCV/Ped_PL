@@ -17,7 +17,7 @@ import es.uned.lsi.compiler.lexical.LexicalErrorManager;
 %column
 %cup
 %ignorecase
-
+%unicode
 
 %implements ScannerIF
 %scanerror LexicalError
@@ -53,13 +53,13 @@ import es.uned.lsi.compiler.lexical.LexicalErrorManager;
 
 
 //Declaracion de expresiones:
-
+ERRORID1 = ;
 COMENTARIO = #(.)*
 DIGITO = [0-9]
 ESPACIO_BLANCO = [ \t\r\n\f]
 IDENTIFICADOR = ({LETRA}|_)({LETRA}|{DIGITO})*
 LETRA = [a-zA-Z]
-NUMERO = 0|[1-9]({DIGITO})*
+NUMERO = {DIGITO}({DIGITO})*
 STRING = \"(.)*\"
 
 
@@ -68,7 +68,7 @@ STRING = \"(.)*\"
 
 
 
-%%
+%%	
 
 <YYINITIAL> 
 {
@@ -76,59 +76,87 @@ STRING = \"(.)*\"
 
 //Declaracion de tokens:
 
-	"("  		{return createToken (sym.PAR_IZDO);}
-	")"  		{return createToken (sym.PAR_DCHO);}
-	"*"  		{return createToken (sym.PRODUCTO);}
-	"+"  		{return createToken (sym.SUMA);}
-	","  		{return createToken (sym.COMA);}
-	".."  		{return createToken (sym.RANGO);}
-	":"  		{return createToken (sym.DOS_PUNTOS);}
-	";"  		{return createToken (sym.PUNTO_COMA);}
-	"<"  		{return createToken (sym.MENOR);}
-	"="  		{return createToken (sym.ASIGNACION);}
-	"=="  		{return createToken (sym.EQUIVALENTE);}
-	"Subprogramas"  		{return createToken (sym.SUBPROGRAMAS);}
-	"["  		{return createToken (sym.COR_IZDO);}
-	"\""  		{return createToken (sym.COMILLA_DOBLE);}
-	"]"  		{return createToken (sym.COR_DCHO);}
-	"booleano"  		{return createToken (sym.BOOLEANO);}
+	"("  			{return createToken (sym.PAR_IZDO);}
+	")"  			{return createToken (sym.PAR_DCHO);}
+	"*"  			{return createToken (sym.PRODUCTO);}
+	"+"  			{return createToken (sym.SUMA);}
+	","  			{return createToken (sym.COMA);}
+	".."  			{return createToken (sym.RANGO);}
+	":"  			{return createToken (sym.DOS_PUNTOS);}
+	";"  			{return createToken (sym.PUNTO_COMA);}
+	"<"  			{return createToken (sym.MENOR);}
+	"="  			{return createToken (sym.ASIGNACION);}
+	"=="  			{return createToken (sym.EQUIVALENTE);}
+	"Subprogramas"  {return createToken (sym.SUBPROGRAMAS);}
+	"["  			{return createToken (sym.COR_IZDO);}
+	"\""  			{return createToken (sym.COMILLA_DOBLE);}
+	"]"  			{return createToken (sym.COR_DCHO);}
+	"booleano"  	{return createToken (sym.BOOLEANO);}
 	"cierto"  		{return createToken (sym.CIERTO);}
-	"comienzo"  		{return createToken (sym.COMIENZO);}
-	"constantes"  		{return createToken (sym.CONSTANTES);}
-	"de"  		{return createToken (sym.DE);}
-	"devolver"  		{return createToken (sym.DEVOLVER);}
-	"en"  		{return createToken (sym.EN);}
+	"comienzo"  	{return createToken (sym.COMIENZO);}
+	"constantes"  	{return createToken (sym.CONSTANTES);}
+	"de"  			{return createToken (sym.DE);}
+	"devolver"  	{return createToken (sym.DEVOLVER);}
+	"en"  			{return createToken (sym.EN);}
 	"entero"  		{return createToken (sym.ENTERO);}
-	"entonces"  		{return createToken (sym.ENTONCES);}
-	"escribir"  		{return createToken (sym.ESCRIBIR);}
+	"entonces"  	{return createToken (sym.ENTONCES);}
+	"escribir"  	{return createToken (sym.ESCRIBIR);}
 	"falso"  		{return createToken (sym.FALSO);}
-	"fin"  		{return createToken (sym.FIN);}
+	"fin"  			{return createToken (sym.FIN);}
 	"funcion"  		{return createToken (sym.FUNCION);}
-	"no"  		{return createToken (sym.NO);}
+	"no"  			{return createToken (sym.NO);}
 	"para"  		{return createToken (sym.PARA);}
-	"procedimiento"  		{return createToken (sym.PROCEDIMIENTO);}
-	"programa"  		{return createToken (sym.PROGRAMA);}
-	"si"  		{return createToken (sym.SI);}
+	"procedimiento" {return createToken (sym.PROCEDIMIENTO);}
+	"programa"  	{return createToken (sym.PROGRAMA);}
+	"si"  			{return createToken (sym.SI);}
 	"sino"  		{return createToken (sym.SINO);}
 	"tipos"  		{return createToken (sym.TIPOS);}
-	"var"  		{return createToken (sym.VAR);}
-	"variables"  		{return createToken (sym.VARIABLES);}
+	"var"  			{return createToken (sym.VAR);}
+	"variables"  	{return createToken (sym.VARIABLES);}
 	"vector"  		{return createToken (sym.VECTOR);}
-	"y"  		{return createToken (sym.Y);}
-	"."  		{return createToken (sym.PUNTO);}
+	"y"  			{return createToken (sym.Y);}
+	"."  			{return createToken (sym.PUNTO);}
 	
 	
 	
 //FIN Declaracion de tokens:
 
-	{NUMERO} 		{return createToken (sym.NUMERO);}
-	{IDENTIFICADOR} 		{return createToken (sym.IDENTIFICADOR);}
+	{NUMERO} 		{
+					String numero = yytext();
+					if (numero.length()>1 && numero.startsWith("0")){
+						LexicalError error = new LexicalError ();
+						error.setLine (yyline + 1);
+						error.setColumn (yycolumn);
+						error.setLexema (numero);
+						lexicalErrorManager.lexicalError ("Error lexico: "+error+" El numero: "+yytext()+" esta mal construido");
+						// Una vez finalizada la depuracion se puede quitar esta llamada para finalizar el programa
+						System.exit(0);
+						}
+					else {
+					return createToken (sym.NUMERO);
+						}
+					}
+	{IDENTIFICADOR} {
+							return createToken (sym.IDENTIFICADOR);
+					
+					}
+{ERRORID1} {			return createToken (sym.ERRORID1);
+//						LexicalError error = new LexicalError ();
+//						error.setLine (yyline + 1);
+//						error.setColumn (yycolumn);
+//						error.setLexema (yytext());
+//						lexicalErrorManager.lexicalError ("Error lexico: "+error+" El identificador "+yytext()+" esta mal construido, no puede contener numeros al inicio");
+//						// Una vez finalizada la depuracion se puede quitar esta llamada para finalizar el programa
+//						//System.exit(0);
+//					
+				}		
+					
 	{STRING} 		{return createToken (sym.STRING);}
 
 
 {ESPACIO_BLANCO}	{}
 
-{COMENTARIO}	{}
+{COMENTARIO}		{}
 
 
 

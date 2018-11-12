@@ -6,9 +6,8 @@ programa ocho:
 comienzo
 
 	
-	para i en 0 .. 10:
-		escribir(i);
-
+	para i en 1..3:
+		x = EsMenorQueDos(v1[i]);
 	fin para;
 	
 

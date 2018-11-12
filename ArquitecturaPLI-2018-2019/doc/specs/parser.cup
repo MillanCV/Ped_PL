@@ -108,8 +108,10 @@ terminal Token NO;
 terminal Token ASIGNACION;
 
 // Patron
-terminal Token NUMERO;
+terminal Token ERRORID1;
 terminal Token IDENTIFICADOR;
+terminal Token NUMERO;
+
 terminal Token STRING;
 
 
@@ -359,6 +361,7 @@ controlSi ::= 				SI expLogica ENTONCES DOS_PUNTOS bloqueSentencias FIN SI
 // ------------------------------------------------------	
 
 controlPara ::= 			PARA IDENTIFICADOR EN constanteNumerica RANGO constanteNumerica DOS_PUNTOS bloqueSentencias FIN PARA ;
+							
 
 				
 // -------------
